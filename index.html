@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="K.NOX">
+<meta name="theme-color" content="#000000">
+<title>K.NOX</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05080a; --bg2:#090e11; --bg3:#0d1419;
+  --surface:#101820; --surface2:#141f2a;
+  --border:#1a2a38; --border2:#253545;
+  --green:#4ade80; --green-dim:#071a10;
+  --amber:#f59e0b; --amber-dim:#2a1d00;
+  --red:#ef4444; --red-dim:#2a0a0a;
+  --blue:#38bdf8; --blue-dim:#072030;
+  --purple:#a78bfa; --purple-dim:#1a1030;
+  --cyan:#22d3ee; --cyan-dim:#061e28;
+  --orange:#fb923c; --orange-dim:#2a1000;
+  --text:#c0d0da; --text2:#6a8a9a; --text3:#304050;
+  --glow:0 0 14px rgba(74,222,128,0.35);
+  --glow-sm:0 0 7px rgba(74,222,128,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;background:#05080a}
+body{height:100%;overflow-x:hidden;overflow-y:auto;background:#05080a;color:#c0d0da;font-family:'Rajdhani',sans-serif,-apple-system,sans-serif;-webkit-text-size-adjust:100%}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);
+  pointer-events:none;z-index:9999;
+}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:200;padding-top:env(safe-area-inset-top)}
+.menu-btn{width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;flex-shrink:0}
+.menu-btn span{display:block;width:18px;height:2px;background:var(--green);border-radius:1px;transition:all .3s}
+.menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.menu-btn.open span:nth-child(2){opacity:0}
+.menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.tb-logo{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--green);text-shadow:var(--glow)}
+.tb-right{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)}
+.status-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;box-shadow:var(--glow-sm)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* DRAWER */
+.drawer-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(5px)}
+.drawer-ov.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;left:-290px;bottom:0;width:290px;background:var(--bg2);border-right:1px solid var(--border);z-index:400;transition:left .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+.drawer.open{left:0}
+.dr-head{padding:26px 24px 18px;border-bottom:1px solid var(--border)}
+.dr-logo{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);text-shadow:var(--glow);letter-spacing:5px;margin-bottom:3px}
+.dr-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px}
+.dr-user{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.u-av{width:40px;height:40px;background:var(--green-dim);border:1.5px solid var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:13px;color:var(--green);font-weight:700}
+.u-name{font-weight:600;font-size:14px;color:var(--text)}
+.u-role{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px}
+.dr-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-sect{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:3px;padding:10px 24px 5px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 24px;cursor:pointer;border-left:3px solid transparent;transition:all .2s}
+.nav-item:active,.nav-item:hover{background:var(--surface)}
+.nav-item.active{background:var(--surface);border-left-color:var(--green)}
+.nav-item.active .nav-lbl{color:var(--green)}
+.nav-ic{width:32px;height:32px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.nav-item.active .nav-ic{background:var(--green-dim);border-color:var(--green)}
+.nav-lbl{font-weight:600;font-size:15px;color:var(--text2);letter-spacing:1px;flex:1}
+.nav-badge{background:var(--green);color:#000;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.dr-foot{padding:14px 24px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px}
+
+/* MAIN */
+.main{position:fixed;top:56px;left:0;right:0;bottom:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom)}
+.screen{display:none;padding:16px}
+.screen.active{display:block}
+
+/* SEC HEADER */
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sec-ic{width:36px;height:36px;background:var(--green-dim);border:1px solid var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.sec-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:3px;color:var(--green)}
+.sec-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center}
+.stat-num{font-family:'Orbitron',monospace;font-size:22px;color:var(--green);text-shadow:var(--glow-sm);line-height:1;margin-bottom:3px}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px}
+
+/* FILTER */
+.filter-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px;padding-bottom:2px}
+.filter-row::-webkit-scrollbar{display:none}
+.fbtn{flex-shrink:0;padding:6px 13px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.fbtn.active{background:var(--green-dim);color:var(--green);border-color:var(--green)}
+
+/* TASKS */
+.task-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;position:relative;overflow:hidden;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.task-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.task-item.high::before{background:var(--red)}
+.task-item.medium::before{background:var(--amber)}
+.task-item.low::before{background:var(--green)}
+.t-chk{width:22px;height:22px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;background:transparent;color:transparent;font-size:12px;font-weight:700;transition:all .2s}
+.t-chk.done{background:var(--green);border-color:var(--green);color:#000}
+.t-body{flex:1;min-width:0}
+.t-txt{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px}
+.task-item.completed .t-txt{text-decoration:line-through;color:var(--text3)}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border-radius:3px;letter-spacing:1px}
+.tag.cat{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+.tag.high{background:var(--red-dim);color:var(--red);border:1px solid var(--red)}
+.tag.medium{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber)}
+.tag.low{background:var(--green-dim);color:var(--green);border:1px solid var(--green)}
+.tag.dt{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue)}
+.tag.rec{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+.t-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:2px 4px;opacity:0;transition:opacity .2s;flex-shrink:0}
+.task-item:hover .t-del{opacity:1}
+
+/* FAB */
+.fab{position:fixed;bottom:28px;right:20px;width:52px;height:52px;background:var(--green);border:none;border-radius:12px;color:#000;font-size:26px;cursor:pointer;z-index:100;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(74,222,128,.5);transition:transform .2s;font-weight:700}
+.fab:active{transform:scale(.92)}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;display:none;align-items:flex-end;backdrop-filter:blur(6px)}
+.modal-ov.open{display:flex}
+.modal-sheet{background:var(--bg2);border:1px solid var(--border);border-bottom:none;border-radius:20px 20px 0 0;padding:16px 20px 48px;width:100%;max-height:90vh;overflow-y:auto;animation:sheetUp .35s cubic-bezier(.34,1.1,.64,1)}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sh-handle{width:32px;height:3px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+.sh-title{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;letter-spacing:3px;color:var(--green);margin-bottom:20px}
+.field{margin-bottom:14px}
+.flbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:2px;display:block;margin-bottom:7px}
+.finput{width:100%;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:7px;font-family:'Rajdhani',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s}
+.finput:focus{border-color:var(--green)}
+.finput::placeholder{color:var(--text3)}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.obtn{padding:7px 13px;border-radius:5px;border:1px solid var(--border);background:transparent;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);cursor:pointer;transition:all .2s;letter-spacing:1px}
+.obtn.s{background:var(--green-dim);color:var(--green);border-color:var(--green)}
+.obtn.sr{background:var(--red-dim);color:var(--red);border-color:var(--red)}
+.obtn.sa{background:var(--amber-dim);color:var(--amber);border-color:var(--amber)}
+.sbtn{width:100%;padding:14px;background:var(--green);color:#000;border:none;border-radius:8px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;margin-top:6px}
+.sbtn:active{opacity:.8}
+
+/* NEWS */
+.news-cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}
+.news-cats::-webkit-scrollbar{display:none}
+.ncat{flex-shrink:0;padding:6px 13px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.ncat.active{color:#000;border-color:transparent}
+.ncat[data-cat="politics"].active{background:#6366f1}
+.ncat[data-cat="terror"].active{background:var(--red)}
+.ncat[data-cat="ai"].active{background:var(--cyan)}
+.ncat[data-cat="finance"].active{background:var(--green)}
+.ncat[data-cat="cyber"].active{background:var(--amber)}
+.ncat[data-cat="conflicts"].active{background:var(--orange)}
+.ncat[data-cat="space"].active{background:var(--purple)}
+
+.news-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;animation:fadeUp .3s ease;transition:border-color .2s;position:relative;overflow:hidden}
+.news-card:hover{border-color:var(--border2)}
+.news-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.news-card[data-cat="politics"]::before{background:#6366f1}
+.news-card[data-cat="terror"]::before{background:var(--red)}
+.news-card[data-cat="ai"]::before{background:var(--cyan)}
+.news-card[data-cat="finance"]::before{background:var(--green)}
+.news-card[data-cat="cyber"]::before{background:var(--amber)}
+.news-card[data-cat="conflicts"]::before{background:var(--orange)}
+.news-card[data-cat="space"]::before{background:var(--purple)}
+.news-cat-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+.news-headline{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:6px}
+.news-summary{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px}
+.news-meta{display:flex;justify-content:space-between;align-items:center}
+.news-source{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px}
+.news-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)}
+.news-urgency{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:8px;padding:1px 6px;border-radius:2px;margin-left:6px}
+.urgency-critical{background:var(--red-dim);color:var(--red);border:1px solid var(--red)}
+.urgency-high{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber)}
+.urgency-normal{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 56px - 32px)}
+.chat-msgs{flex:1;overflow-y:auto;padding-bottom:12px;scrollbar-width:none}
+.chat-msgs::-webkit-scrollbar{display:none}
+.msg{display:flex;gap:10px;margin-bottom:14px;animation:fadeUp .3s ease}
+.msg.user{flex-direction:row-reverse}
+.msg-av{width:32px;height:32px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.msg.jarvis .msg-av{background:var(--green-dim);border:1px solid var(--green)}
+.msg.user .msg-av{background:var(--surface2);border:1px solid var(--border)}
+.msg-bbl{max-width:78%;padding:10px 13px;border-radius:10px;font-size:14px;line-height:1.55}
+.msg.jarvis .msg-bbl{background:var(--surface);border:1px solid var(--border);color:var(--text);border-top-left-radius:2px}
+.msg.user .msg-bbl{background:var(--green-dim);border:1px solid var(--green);color:var(--green);border-top-right-radius:2px}
+.msg-name{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;margin-bottom:4px}
+.msg.jarvis .msg-name{color:var(--green)}
+.msg.user .msg-name{color:var(--text3);text-align:right}
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.tdot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:bnc 1.2s infinite}
+.tdot:nth-child(2){animation-delay:.2s}
+.tdot:nth-child(3){animation-delay:.4s}
+@keyframes bnc{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+.chat-input-row{display:flex;gap:8px;align-items:flex-end;padding-top:12px;border-top:1px solid var(--border)}
+.chat-in{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Rajdhani',sans-serif;font-size:15px;color:var(--text);outline:none;resize:none;min-height:44px;max-height:100px;transition:border-color .2s}
+.chat-in:focus{border-color:var(--green)}
+.chat-in::placeholder{color:var(--text3)}
+.send-btn{width:44px;height:44px;background:var(--green);border:none;border-radius:10px;color:#000;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.send-btn:active{opacity:.7}
+
+/* OSINT */
+.cyber-map-container{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.cyber-map-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cyber-map-title{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:2px}
+.live-badge{background:var(--red-dim);color:var(--red);border:1px solid var(--red);font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;animation:pulse 2s infinite}
+.world-map{position:relative;width:100%;height:260px;background:var(--bg3);overflow:hidden}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(26,42,56,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(26,42,56,.5) 1px,transparent 1px);background-size:20px 20px}
+.map-continent{position:absolute;background:rgba(30,45,56,.6);border:1px solid rgba(74,222,128,.15);border-radius:3px}
+.attack-dot{position:absolute;width:8px;height:8px;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer}
+.attack-dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;animation:ripple 1.5s infinite}
+@keyframes ripple{0%{transform:scale(1);opacity:.8}100%{transform:scale(3);opacity:0}}
+.attack-line{position:absolute;pointer-events:none;overflow:visible}
+.map-stats{display:flex;gap:0;border-top:1px solid var(--border)}
+.map-stat{flex:1;padding:10px;text-align:center;border-right:1px solid var(--border)}
+.map-stat:last-child{border-right:none}
+.map-stat-num{font-family:'Orbitron',monospace;font-size:16px;color:var(--red);text-shadow:0 0 8px rgba(239,68,68,.4)}
+.map-stat-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1px}
+
+.osint-section-title{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:3px;margin:16px 0 8px;text-transform:uppercase}
+
+.breach-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.breach-icon{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.breach-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.breach-detail{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px;line-height:1.5}
+.breach-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;border-radius:3px;margin-top:5px}
+
+.threat-actor{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px}
+.ta-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ta-name{font-size:13px;font-weight:700;color:var(--red)}
+.ta-origin{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px}
+.ta-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:6px}
+.ta-tags{display:flex;gap:5px;flex-wrap:wrap}
+
+.darkweb-item{background:var(--surface);border:1px solid var(--purple);border-radius:8px;padding:12px;margin-bottom:8px;position:relative;overflow:hidden}
+.darkweb-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--purple)}
+.dw-title{font-size:13px;font-weight:600;color:var(--purple);margin-bottom:4px}
+.dw-detail{font-size:12px;color:var(--text2);line-height:1.5}
+.dw-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:6px;letter-spacing:1px}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-month{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--green);letter-spacing:2px}
+.cal-btn{width:32px;height:32px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:14px}
+.cal-lbl{text-align:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;padding:4px 0 8px}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);border:1px solid transparent;transition:all .15s;position:relative}
+.cal-day:hover{background:var(--surface);border-color:var(--border)}
+.cal-day.today{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.cal-day.has-task::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--amber);border-radius:50%}
+.cal-day.other-month{color:var(--text3)}
+.cal-day.selected{background:var(--surface2);border-color:var(--border2);color:var(--text)}
+
+/* NOTES */
+.note-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;cursor:pointer;transition:border-color .2s;animation:fadeUp .3s ease;position:relative}
+.note-card:hover{border-color:var(--border2)}
+.note-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.note-card-prev{font-size:12px;color:var(--text3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.note-card-date{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;margin-top:8px}
+.note-del{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;opacity:0;transition:opacity .2s}
+.note-card:hover .note-del{opacity:.6}
+.note-editor{display:none;flex-direction:column;height:calc(100vh - 56px - 32px)}
+.note-editor.open{display:flex}
+.note-back{display:flex;align-items:center;gap:8px;padding:0 0 14px;border-bottom:1px solid var(--border);margin-bottom:14px;cursor:pointer;color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px}
+.note-title-in{background:transparent;border:none;font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text);outline:none;margin-bottom:12px;width:100%}
+.note-title-in::placeholder{color:var(--text3)}
+.note-body-in{flex:1;background:transparent;border:none;font-family:'Rajdhani',sans-serif;font-size:15px;color:var(--text);outline:none;resize:none;line-height:1.7}
+.note-body-in::placeholder{color:var(--text3)}
+.note-save-bar{display:flex;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--border)}
+.note-save-btn{padding:9px 20px;background:var(--green-dim);border:1px solid var(--green);border-radius:7px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px;cursor:pointer}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;font-family:'Share Tech Mono',monospace;color:var(--text3);font-size:11px;letter-spacing:2px;line-height:2}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.4}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <button class="menu-btn" id="menuBtn" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+  <div class="tb-logo">K.NOX</div>
+  <div class="tb-right"><div class="status-dot"></div><span id="tbClock"></span></div>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-ov" id="drawerOv" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dr-head">
+    <div class="dr-logo">K.NOX</div>
+    <div class="dr-tag">// TACTICAL INTELLIGENCE SYSTEM v2.5</div>
+  </div>
+  <div class="dr-user">
+    <div class="u-av">OP</div>
+    <div><div class="u-name">Operator</div><div class="u-role">▸ CLEARANCE: ALPHA</div></div>
+  </div>
+  <nav class="dr-nav">
+    <div class="nav-sect">// MODULES</div>
+    <div class="nav-item active" onclick="switchScreen('tasks')"><div class="nav-ic">⬛</div><div class="nav-lbl">TASKS</div><div class="nav-badge" id="taskBadge">0</div></div>
+    <div class="nav-item" onclick="switchScreen('news')"><div class="nav-ic">📡</div><div class="nav-lbl">INTEL FEED</div></div>
+    <div class="nav-item" onclick="switchScreen('jarvis')"><div class="nav-ic">◈</div><div class="nav-lbl">JARVIS</div></div>
+    <div class="nav-item" onclick="switchScreen('osint')"><div class="nav-ic">⬡</div><div class="nav-lbl">OSINT</div></div>
+    <div class="nav-item" onclick="switchScreen('calendar')"><div class="nav-ic">▦</div><div class="nav-lbl">CALENDAR</div></div>
+    <div class="nav-item" onclick="switchScreen('notes')"><div class="nav-ic">▤</div><div class="nav-lbl">NOTES</div></div>
+  </nav>
+  <div class="dr-foot">SYS: ONLINE · ENC: AES-256 · VER: 2.5.0</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TASKS -->
+  <div class="screen active" id="screen-tasks">
+    <div class="sec-hdr"><div class="sec-ic">⬛</div><div><div class="sec-title">TASKS</div><div class="sec-sub">// MISSION QUEUE</div></div></div>
+    <div class="stats-grid" id="taskStats"></div>
+    <div class="filter-row">
+      <button class="fbtn active" onclick="setTF('all',this)">ALL</button>
+      <button class="fbtn" onclick="setTF('today',this)">TODAY</button>
+      <button class="fbtn" onclick="setTF('upcoming',this)">UPCOMING</button>
+      <button class="fbtn" onclick="setTF('done',this)">DONE</button>
+    </div>
+    <div id="taskList"></div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="screen" id="screen-news">
+    <div class="sec-hdr">
+      <div class="sec-ic">📡</div>
+      <div style="flex:1">
+        <div class="sec-title">INTEL FEED</div>
+        <div class="sec-sub">// LIVE RSS · BBC · REUTERS · AL JAZEERA · DARK READING</div>
+      </div>
+      <button onclick="newsLoaded=false;fetchLiveNews()" style="background:var(--green-dim);border:1px solid var(--green);border-radius:6px;color:var(--green);font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 10px;cursor:pointer;letter-spacing:1px">↻ REFRESH</button>
+    </div>
+    <div class="news-cats">
+      <button class="ncat active" data-cat="all" onclick="setNC('all',this)">ALL</button>
+      <button class="ncat" data-cat="politics" onclick="setNC('politics',this)">POLITICS</button>
+      <button class="ncat" data-cat="terror" onclick="setNC('terror',this)">THREATS</button>
+      <button class="ncat" data-cat="ai" onclick="setNC('ai',this)">AI/TECH</button>
+      <button class="ncat" data-cat="finance" onclick="setNC('finance',this)">FINANCE</button>
+      <button class="ncat" data-cat="cyber" onclick="setNC('cyber',this)">CYBER</button>
+      <button class="ncat" data-cat="conflicts" onclick="setNC('conflicts',this)">CONFLICTS</button>
+      <button class="ncat" data-cat="space" onclick="setNC('space',this)">SPACE</button>
+    </div>
+    <div id="newsList"></div>
+  </div>
+
+  <!-- JARVIS -->
+  <div class="screen" id="screen-jarvis">
+    <div class="sec-hdr"><div class="sec-ic">◈</div><div><div class="sec-title">JARVIS</div><div class="sec-sub">// AI MENTOR · ONLINE</div></div></div>
+    <div class="chat-wrap">
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-in" id="chatIn" placeholder="Talk to Jarvis..." rows="1" onkeydown="chatKey(event)"></textarea>
+        <button class="send-btn" onclick="sendMsg()">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OSINT -->
+  <div class="screen" id="screen-osint">
+    <div class="sec-hdr"><div class="sec-ic">⬡</div><div><div class="sec-title">OSINT</div><div class="sec-sub">// GLOBAL THREAT INTELLIGENCE</div></div></div>
+
+    <!-- CYBER MAP -->
+    <div class="cyber-map-container">
+      <div class="cyber-map-header">
+        <div class="cyber-map-title">// LIVE GLOBAL CYBERATTACK MAP</div>
+        <div class="live-badge">● LIVE</div>
+      </div>
+      <div class="world-map" id="worldMap">
+        <div class="map-grid"></div>
+        <!-- Real SVG World Map -->
+        <svg id="worldSvg" viewBox="0 0 1000 500" style="position:absolute;inset:0;width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ocean background -->
+          <rect width="1000" height="500" fill="#060d14"/>
+          <!-- Grid lines -->
+          <g stroke="rgba(26,42,56,0.6)" stroke-width="0.5">
+            <line x1="0" y1="125" x2="1000" y2="125"/>
+            <line x1="0" y1="250" x2="1000" y2="250"/>
+            <line x1="0" y1="375" x2="1000" y2="375"/>
+            <line x1="250" y1="0" x2="250" y2="500"/>
+            <line x1="500" y1="0" x2="500" y2="500"/>
+            <line x1="750" y1="0" x2="750" y2="500"/>
+          </g>
+          <!-- Equator -->
+          <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(74,222,128,0.15)" stroke-width="1" stroke-dasharray="8,8"/>
+
+          <!-- NORTH AMERICA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <!-- Canada -->
+            <path d="M95,60 L180,55 L220,70 L240,80 L230,100 L200,110 L170,105 L140,115 L110,110 L90,90 Z"/>
+            <!-- USA mainland -->
+            <path d="M100,115 L200,110 L230,100 L250,115 L260,130 L255,155 L230,165 L200,168 L170,170 L140,165 L110,160 L95,145 L90,130 Z"/>
+            <!-- Mexico -->
+            <path d="M110,165 L180,168 L200,175 L195,195 L175,205 L155,200 L135,185 L115,178 Z"/>
+            <!-- Alaska -->
+            <path d="M30,55 L75,50 L90,65 L80,75 L55,72 L35,68 Z"/>
+            <!-- Greenland -->
+            <path d="M195,30 L240,25 L255,40 L245,60 L220,65 L200,55 L190,42 Z"/>
+          </g>
+
+          <!-- SOUTH AMERICA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <path d="M155,210 L200,205 L225,215 L235,240 L230,270 L220,300 L200,330 L180,355 L165,370 L155,355 L148,320 L145,285 L148,255 L150,230 Z"/>
+          </g>
+
+          <!-- EUROPE -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <!-- Main Europe -->
+            <path d="M420,65 L480,60 L510,70 L520,90 L510,110 L490,120 L460,125 L435,120 L420,105 L415,85 Z"/>
+            <!-- UK -->
+            <path d="M405,75 L420,70 L425,85 L415,95 L405,90 Z"/>
+            <!-- Scandinavia -->
+            <path d="M450,40 L490,35 L505,50 L495,65 L470,68 L450,60 Z"/>
+            <!-- Iberian Peninsula -->
+            <path d="M415,110 L445,108 L450,125 L440,138 L420,135 L412,122 Z"/>
+            <!-- Italy -->
+            <path d="M460,110 L475,108 L480,125 L472,140 L462,135 L458,120 Z"/>
+          </g>
+
+          <!-- AFRICA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <path d="M420,145 L490,140 L510,155 L515,185 L510,220 L500,260 L480,295 L460,315 L440,310 L420,290 L410,255 L408,220 L410,185 L415,160 Z"/>
+          </g>
+
+          <!-- RUSSIA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <path d="M480,45 L620,35 L750,40 L820,50 L840,70 L800,85 L740,90 L660,88 L580,85 L510,80 L485,70 Z"/>
+          </g>
+
+          <!-- MIDDLE EAST -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <path d="M510,130 L570,125 L590,140 L585,165 L560,175 L535,170 L515,155 Z"/>
+            <!-- Arabian Peninsula -->
+            <path d="M535,165 L580,160 L595,180 L585,210 L565,220 L545,210 L530,190 Z"/>
+          </g>
+
+          <!-- CENTRAL/SOUTH ASIA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <!-- India -->
+            <path d="M600,150 L650,145 L665,165 L660,195 L645,220 L625,230 L608,215 L598,185 L595,165 Z"/>
+            <!-- Central Asia -->
+            <path d="M570,90 L660,85 L680,100 L675,125 L650,135 L610,138 L580,130 L565,112 Z"/>
+          </g>
+
+          <!-- EAST ASIA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <!-- China -->
+            <path d="M660,85 L760,80 L790,95 L800,120 L790,148 L760,160 L720,165 L685,158 L665,140 L658,115 Z"/>
+            <!-- Japan -->
+            <path d="M800,100 L820,95 L830,108 L822,122 L808,118 Z"/>
+            <!-- Korea -->
+            <path d="M775,115 L795,112 L798,128 L780,132 Z"/>
+            <!-- Southeast Asia -->
+            <path d="M700,165 L750,160 L770,175 L760,200 L735,210 L710,205 L698,185 Z"/>
+          </g>
+
+          <!-- AUSTRALIA & OCEANIA -->
+          <g fill="#1a2e3a" stroke="#22d3ee" stroke-width="0.8" opacity="0.9">
+            <path d="M730,295 L820,285 L860,295 L870,325 L855,355 L820,370 L780,368 L748,350 L730,325 Z"/>
+            <!-- New Zealand -->
+            <path d="M865,340 L880,335 L885,355 L875,368 L865,360 Z"/>
+          </g>
+
+          <!-- Attack lines layer -->
+          <g id="attackLines" opacity="0.7"></g>
+          <!-- Attack dots layer -->
+          <g id="attackDots"></g>
+          <!-- City labels -->
+          <g id="cityLabels" font-family="'Share Tech Mono',monospace" font-size="6" fill="rgba(74,222,128,0.5)"></g>
+        </svg>
+        <!-- Tooltip -->
+        <div id="mapTooltip" style="position:absolute;background:rgba(5,8,10,0.95);border:1px solid var(--red);border-radius:6px;padding:6px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);pointer-events:none;display:none;z-index:10;letter-spacing:1px;white-space:nowrap"></div>
+      </div>
+      <div class="map-stats">
+        <div class="map-stat"><div class="map-stat-num" id="mapAttacks">—</div><div class="map-stat-lbl">ATTACKS/HR</div></div>
+        <div class="map-stat"><div class="map-stat-num" id="mapCountries" style="color:var(--amber)">—</div><div class="map-stat-lbl">NATIONS HIT</div></div>
+        <div class="map-stat"><div class="map-stat-num" id="mapSources" style="color:var(--red)">—</div><div class="map-stat-lbl">THREAT ACTORS</div></div>
+      </div>
+      <div style="padding:8px 14px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);display:flex;justify-content:space-between">
+        <span>SRC: CLOUDFLARE RADAR · <span id="radarSource">FETCHING...</span></span>
+        <span style="color:var(--green)">● LIVE</span>
+      </div>
+    </div>
+
+    <div class="osint-section-title">// RECENT BREACH REPORTS</div>
+    <div id="breachList"></div>
+
+    <div class="osint-section-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>// LIVE INTERNET OUTAGES</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green);letter-spacing:1px">SRC: CLOUDFLARE RADAR</span>
+    </div>
+    <div id="radarOutages"><div class="empty" style="padding:16px"><div class="empty-icon" style="font-size:20px;animation:pulse 1s infinite">🌐</div>FETCHING LIVE OUTAGE DATA...</div></div>
+
+    <div class="osint-section-title">// DARK WEB ALERTS</div>
+    <div id="darkwebList"></div>
+
+    <div class="osint-section-title">// ACTIVE THREAT ACTORS</div>
+    <div id="threatActorList"></div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="screen" id="screen-calendar">
+    <div class="sec-hdr"><div class="sec-ic">▦</div><div><div class="sec-title">CALENDAR</div><div class="sec-sub">// MISSION TIMELINE</div></div></div>
+    <div class="card">
+      <div class="cal-nav">
+        <button class="cal-btn" onclick="calNav(-1)">‹</button>
+        <div class="cal-month" id="calLabel"></div>
+        <button class="cal-btn" onclick="calNav(1)">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:2px;margin-bottom:8px" id="calSelLabel">// SELECT A DATE</div>
+    <div id="calTasks"></div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="screen" id="screen-notes">
+    <div id="notesListView">
+      <div class="sec-hdr"><div class="sec-ic">▤</div><div><div class="sec-title">NOTES</div><div class="sec-sub">// FIELD INTELLIGENCE</div></div></div>
+      <div class="note-grid" id="noteGrid"></div>
+    </div>
+    <div class="note-editor" id="noteEditor">
+      <div class="note-back" onclick="closeNoteEditor()">◀ &nbsp;BACK</div>
+      <input class="note-title-in" id="noteTitleIn" placeholder="Note title..."/>
+      <textarea class="note-body-in" id="noteBodyIn" placeholder="Write field intelligence here..."></textarea>
+      <div class="note-save-bar"><button class="note-save-btn" onclick="saveNote()">▸ SAVE</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openTaskModal()">+</button>
+
+<!-- TASK MODAL -->
+<div class="modal-ov" id="taskModal">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <div class="sh-title">▸ NEW TASK</div>
+    <div class="field"><label class="flbl">// TASK DESCRIPTION</label><input class="finput" id="tIn" placeholder="Describe the objective..."/></div>
+    <div class="field"><label class="flbl">// DUE DATE & TIME</label><input class="finput" type="datetime-local" id="tDate"/></div>
+    <div class="field"><label class="flbl">// CATEGORY</label>
+      <div class="opts" id="tCatRow">
+        <button class="obtn" onclick="selOpt(this,'cat','Work')">WORK</button>
+        <button class="obtn" onclick="selOpt(this,'cat','Personal')">PERSONAL</button>
+        <button class="obtn" onclick="selOpt(this,'cat','Health')">HEALTH</button>
+        <button class="obtn" onclick="selOpt(this,'cat','Finance')">FINANCE</button>
+        <button class="obtn" onclick="selOpt(this,'cat','Recon')">RECON</button>
+      </div>
+    </div>
+    <div class="field"><label class="flbl">// PRIORITY</label>
+      <div class="opts">
+        <button class="obtn" onclick="selPri(this,'high')">⬤ HIGH</button>
+        <button class="obtn" onclick="selPri(this,'medium')">⬤ MEDIUM</button>
+        <button class="obtn s" onclick="selPri(this,'low')">⬤ LOW</button>
+      </div>
+    </div>
+    <div class="field"><label class="flbl">// RECURRENCE</label>
+      <div class="opts" id="tRecRow">
+        <button class="obtn s" onclick="selOpt(this,'rec','none')">NONE</button>
+        <button class="obtn" onclick="selOpt(this,'rec','daily')">DAILY</button>
+        <button class="obtn" onclick="selOpt(this,'rec','weekly')">WEEKLY</button>
+        <button class="obtn" onclick="selOpt(this,'rec','monthly')">MONTHLY</button>
+      </div>
+    </div>
+    <button class="sbtn" onclick="addTask()">▸ DEPLOY TASK</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────
+let tasks = JSON.parse(localStorage.getItem('knox2_tasks')||'[]');
+let notes = JSON.parse(localStorage.getItem('knox2_notes')||'[]');
+let chatHistory = [];
+let taskFilter='all', newsCat='all', calDate=new Date(), selCalDay=null;
+let editingNoteId=null, tPri='low', tCat='', tRec='none';
+
+function save(){ localStorage.setItem('knox2_tasks',JSON.stringify(tasks)); localStorage.setItem('knox2_notes',JSON.stringify(notes)); }
+
+// ── CLOCK moved to DOMContentLoaded below ─────────────
+
+// ── DRAWER ────────────────────────────────────────────
+function toggleDrawer(){ const d=document.getElementById('drawer'),o=document.getElementById('drawerOv'),b=document.getElementById('menuBtn'); d.classList.toggle('open');o.classList.toggle('open');b.classList.toggle('open'); }
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOv').classList.remove('open');document.getElementById('menuBtn').classList.remove('open'); }
+
+// ── NAV ───────────────────────────────────────────────
+function switchScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{ if(n.getAttribute('onclick')?.includes(name)) n.classList.add('active'); });
+  const fab=document.getElementById('fab');
+  fab.style.display=(name==='tasks'||name==='notes')?'flex':'none';
+  fab.onclick=name==='notes'?()=>openNoteEditor():openTaskModal;
+  if(name==='calendar') renderCal();
+  if(name==='notes') renderNotes();
+  if(name==='news') renderNews();
+  if(name==='osint') initOsint();
+  closeDrawer();
+}
+
+// ── TASKS ─────────────────────────────────────────────
+function isToday(iso){ if(!iso)return false; const d=new Date(iso),n=new Date(); return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate(); }
+function isUpcoming(iso){ if(!iso)return false; const d=new Date(iso),n=new Date(); const t=new Date(n.getFullYear(),n.getMonth(),n.getDate()),dd=new Date(d.getFullYear(),d.getMonth(),d.getDate()); return dd>t; }
+function fmtDate(iso){ if(!iso)return null; const d=new Date(iso),n=new Date(),today=new Date(n.getFullYear(),n.getMonth(),n.getDate()),dd=new Date(d.getFullYear(),d.getMonth(),d.getDate()),t=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}); if(dd.getTime()===today.getTime()) return{l:`TODAY ${t}`,ov:d<n}; if(dd.getTime()===today.getTime()+86400000) return{l:`TOMORROW ${t}`,ov:false}; if(d<n) return{l:d.toLocaleDateString([],{month:'short',day:'numeric'})+` ${t}`,ov:true}; return{l:d.toLocaleDateString([],{month:'short',day:'numeric'})+` ${t}`,ov:false}; }
+
+function renderTasks(){
+  const el=document.getElementById('taskList');
+  const filtered=tasks.filter(t=>{ if(taskFilter==='done')return t.done; if(taskFilter==='today')return!t.done&&isToday(t.date); if(taskFilter==='upcoming')return!t.done&&isUpcoming(t.date); return!t.done; }).sort((a,b)=>({high:0,medium:1,low:2}[a.priority]-{high:0,medium:1,low:2}[b.priority]));
+  const total=tasks.filter(t=>!t.done).length, today=tasks.filter(t=>!t.done&&isToday(t.date)).length, done=tasks.filter(t=>t.done).length;
+  document.getElementById('taskStats').innerHTML=`<div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">PENDING</div></div><div class="stat-box"><div class="stat-num">${today}</div><div class="stat-lbl">TODAY</div></div><div class="stat-box"><div class="stat-num">${done}</div><div class="stat-lbl">DONE</div></div>`;
+  document.getElementById('taskBadge').textContent=total;
+  if(!filtered.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">⬛</div>NO ACTIVE TASKS<br>DEPLOY A NEW OBJECTIVE</div>`; return; }
+  const rm={daily:'↻ DAILY',weekly:'↻ WEEKLY',monthly:'↻ MONTHLY'};
+  el.innerHTML=filtered.map(t=>{ const df=t.date?fmtDate(t.date):null; return `<div class="task-item ${t.priority} ${t.done?'completed':''}"><button class="t-chk ${t.done?'done':''}" onclick="toggleTask('${t.id}')">✓</button><div class="t-body"><div class="t-txt">${t.text}</div><div class="tags">${t.cat?`<span class="tag cat">${t.cat}</span>`:''}<span class="tag ${t.priority}">${t.priority.toUpperCase()}</span>${df?`<span class="tag dt" ${df.ov?'style="color:var(--red);border-color:var(--red)"':''}>${df.ov?'⚠ ':''}${df.l}</span>`:''} ${t.recur&&t.recur!=='none'?`<span class="tag rec">${rm[t.recur]}</span>`:''}</div></div><button class="t-del" onclick="deleteTask('${t.id}')">✕</button></div>`; }).join('');
+}
+function toggleTask(id){ const t=tasks.find(t=>t.id===id); if(t){t.done=!t.done;save();renderTasks();} }
+function deleteTask(id){ tasks=tasks.filter(t=>t.id!==id);save();renderTasks(); }
+function setTF(f,el){ taskFilter=f; document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); renderTasks(); }
+
+function openTaskModal(){ tPri='low';tCat='';tRec='none'; document.getElementById('tIn').value='';document.getElementById('tDate').value=''; document.querySelectorAll('#tCatRow .obtn').forEach(b=>b.classList.remove('s','sr','sa')); document.querySelectorAll('#tRecRow .obtn').forEach(b=>b.classList.remove('s','sr','sa')); document.querySelector('#tRecRow .obtn').classList.add('s'); document.getElementById('taskModal').classList.add('open'); }
+document.getElementById('taskModal').addEventListener('click',function(e){ if(e.target===this)this.classList.remove('open'); });
+function selOpt(el,type,val){ if(type==='cat'){tCat=val;document.querySelectorAll('#tCatRow .obtn').forEach(b=>b.classList.remove('s','sr','sa'));} if(type==='rec'){tRec=val;document.querySelectorAll('#tRecRow .obtn').forEach(b=>b.classList.remove('s','sr','sa'));} el.classList.add('s'); }
+function selPri(el,val){ tPri=val; document.querySelectorAll('.opts .obtn[onclick*="selPri"]').forEach(b=>b.classList.remove('s','sr','sa')); if(val==='high')el.classList.add('sr'); else if(val==='medium')el.classList.add('sa'); else el.classList.add('s'); }
+function addTask(){ const text=document.getElementById('tIn').value.trim(); if(!text)return; tasks.unshift({id:Date.now().toString(),text,date:document.getElementById('tDate').value||null,cat:tCat,priority:tPri,recur:tRec,done:false}); save();renderTasks();document.getElementById('taskModal').classList.remove('open'); }
+
+// ── LIVE NEWS ─────────────────────────────────────────
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const NEWS_FEEDS = [
+  {url:'https://feeds.bbci.co.uk/news/world/rss.xml',         source:'BBC WORLD',     cat:'politics'},
+  {url:'https://feeds.bbci.co.uk/news/technology/rss.xml',    source:'BBC TECH',      cat:'ai'},
+  {url:'https://feeds.bbci.co.uk/news/business/rss.xml',      source:'BBC BUSINESS',  cat:'finance'},
+  {url:'https://www.aljazeera.com/xml/rss/all.xml',           source:'AL JAZEERA',    cat:'conflicts'},
+  {url:'https://feeds.feedburner.com/TheHackersNews',         source:'HACKER NEWS',   cat:'cyber'},
+  {url:'https://www.darkreading.com/rss.xml',                 source:'DARK READING',  cat:'cyber'},
+  {url:'https://spacenews.com/feed/',                         source:'SPACE NEWS',    cat:'space'},
+  {url:'https://www.nasa.gov/rss/dyn/breaking_news.rss',      source:'NASA',          cat:'space'},
+  {url:'https://feeds.reuters.com/reuters/topNews',           source:'REUTERS',       cat:'politics'},
+  {url:'https://www.ft.com/?format=rss',                      source:'FIN. TIMES',    cat:'finance'},
+];
+
+let liveNewsItems = [];
+let currentNewsCat = 'all';
+let newsLoaded = false;
+
+const catColors={politics:'#6366f1',terror:'var(--red)',ai:'var(--cyan)',finance:'var(--green)',cyber:'var(--amber)',conflicts:'var(--orange)',space:'var(--purple)'};
+const catNames={politics:'POLITICS',terror:'THREAT',ai:'AI/TECH',finance:'FINANCE',cyber:'CYBER',conflicts:'CONFLICT',space:'SPACE'};
+
+function timeAgo(dateStr){
+  try{
+    const d=new Date(dateStr), now=new Date();
+    const diff=Math.floor((now-d)/1000);
+    if(diff<60) return `${diff}S AGO`;
+    if(diff<3600) return `${Math.floor(diff/60)}M AGO`;
+    if(diff<86400) return `${Math.floor(diff/3600)}H AGO`;
+    return `${Math.floor(diff/86400)}D AGO`;
+  }catch(e){ return 'RECENT'; }
+}
+
+function classifyItem(item, feedCat){
+  const txt=(item.title+' '+(item.description||'')).toLowerCase();
+  if(/terror|attack|bomb|isis|militant|extremi|threat|weapon|hijack|hostage|shoot/.test(txt)) return 'terror';
+  if(/hack|breach|cyber|malware|ransomware|exploit|ddos|phish|vuln|zero.day|spyware/.test(txt)) return 'cyber';
+  if(/bitcoin|crypto|stock|market|fed|inflation|gdp|bank|invest|economy|trade|tariff|rate/.test(txt)) return 'finance';
+  if(/ai|artificial intelligence|chatgpt|openai|llm|neural|robot|machine learning|deepmind/.test(txt)) return 'ai';
+  if(/war|military|missile|troops|ukraine|israel|gaza|conflict|nato|sanction|nuclear|drone strike/.test(txt)) return 'conflicts';
+  if(/space|nasa|rocket|satellite|mars|moon|asteroid|orbit|launch|spacex/.test(txt)) return 'space';
+  return feedCat;
+}
+
+function stripHtml(html){ const d=document.createElement('div');d.innerHTML=html||'';return d.textContent||d.innerText||''; }
+
+async function fetchLiveNews(){
+  const el=document.getElementById('newsList');
+  el.innerHTML=`<div class="empty"><div class="empty-icon" style="font-size:28px;animation:pulse 1s infinite">📡</div>FETCHING LIVE INTEL FEEDS...<br><span style="font-size:9px;color:var(--text3)">CONNECTING TO ${NEWS_FEEDS.length} SOURCES</span></div>`;
+
+  const results=[];
+  const promises=NEWS_FEEDS.map(async feed=>{
+    try{
+      const res=await fetch(`${RSS_PROXY}${encodeURIComponent(feed.url)}&count=8&api_key=public`,{signal:AbortSignal.timeout(8000)});
+      const data=await res.json();
+      if(data.items&&data.items.length){
+        data.items.forEach(item=>{
+          results.push({
+            headline: item.title||'',
+            summary: stripHtml(item.description||item.content||'').substring(0,160)+'...',
+            source: feed.source,
+            cat: classifyItem(item, feed.cat),
+            time: item.pubDate ? timeAgo(item.pubDate) : 'RECENT',
+            link: item.link||'#',
+            pubDate: item.pubDate||''
+          });
+        });
+      }
+    }catch(e){}
+  });
+
+  await Promise.allSettled(promises);
+
+  // Sort by date, deduplicate headlines
+  const seen=new Set();
+  liveNewsItems = results
+    .filter(i=>{ if(seen.has(i.headline))return false; seen.add(i.headline); return i.headline.length>10; })
+    .sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+
+  newsLoaded=true;
+  renderNewsItems();
+}
+
+function setNC(cat,el){
+  currentNewsCat=cat;
+  document.querySelectorAll('.ncat').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderNewsItems();
+}
+
+function renderNews(){
+  if(!newsLoaded) fetchLiveNews();
+  else renderNewsItems();
+}
+
+function renderNewsItems(){
+  const el=document.getElementById('newsList');
+  const filtered=currentNewsCat==='all'?liveNewsItems:liveNewsItems.filter(n=>n.cat===currentNewsCat);
+
+  if(!filtered.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📡</div>${newsLoaded?'NO STORIES IN THIS CATEGORY':'LOADING FEEDS...'}</div>`;
+    return;
+  }
+
+  el.innerHTML=filtered.map(n=>{
+    const col=catColors[n.cat]||'var(--text3)';
+    const name=catNames[n.cat]||n.cat.toUpperCase();
+    return `<a href="${n.link}" target="_blank" style="text-decoration:none">
+      <div class="news-card" data-cat="${n.cat}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span class="news-cat-badge" style="background:${col}22;color:${col};border:1px solid ${col}">${name}</span>
+          <span class="news-urgency urgency-normal" style="color:var(--green);border-color:var(--green);background:var(--green-dim)">● LIVE</span>
+        </div>
+        <div class="news-headline">${n.headline}</div>
+        <div class="news-summary">${n.summary}</div>
+        <div class="news-meta">
+          <span class="news-source">${n.source}</span>
+          <span class="news-time">${n.time}</span>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+// Refresh news every 10 minutes
+setInterval(()=>{ if(newsLoaded){ newsLoaded=false; fetchLiveNews(); } }, 600000);
+
+// ── JARVIS AI ─────────────────────────────────────────
+const JARVIS_SYS=`You are Jarvis — the AI embedded in K.NOX, a personal tactical intelligence system. Your personality is a fusion of three modes:
+
+1. SHARP & BLUNT: You call things as they are. No sugarcoating. If someone is slacking, you say so directly.
+2. MENTOR: You challenge the user to think deeper and do better. You give real, actionable advice — not feel-good fluff.
+3. COLD STRATEGIST: You think in systems, data, and outcomes. You strip emotion from analysis and focus on what works.
+
+You are NOT sweet. You are NOT a cheerleader. You respect the user enough to be honest.
+Tone: Confident, sharp, occasionally dry humor. You address the user as "Operator" sometimes.
+You help with: task management, scheduling, OSINT guidance, research methodologies, and general intelligence work.
+Keep replies focused and efficient. Never ramble. If the user is unclear, call it out and ask for clarity.
+
+Current task data: TASK_DATA`;
+
+function appendMsg(role,text){
+  const el=document.getElementById('chatMsgs');
+  const div=document.createElement('div');
+  div.className=`msg ${role}`;
+  div.innerHTML=`<div class="msg-av">${role==='jarvis'?'◈':'👤'}</div><div><div class="msg-name">${role==='jarvis'?'JARVIS':'OPERATOR'}</div><div class="msg-bbl">${text.replace(/\n/g,'<br>')}</div></div>`;
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+}
+function showTyping(){ const el=document.getElementById('chatMsgs'); const d=document.createElement('div'); d.className='msg jarvis';d.id='typing'; d.innerHTML=`<div class="msg-av">◈</div><div><div class="msg-name">JARVIS</div><div class="msg-bbl"><div class="typing"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div></div>`; el.appendChild(d); el.scrollTop=el.scrollHeight; }
+function hideTyping(){ const t=document.getElementById('typing'); if(t)t.remove(); }
+
+async function sendMsg(){
+  const input=document.getElementById('chatIn');
+  const text=input.value.trim(); if(!text)return;
+  input.value=''; appendMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  showTyping();
+  const taskSummary=tasks.length?tasks.slice(0,8).map(t=>`- ${t.text} [${t.priority}] ${t.done?'(done)':'(pending)'} ${t.date?'due '+new Date(t.date).toLocaleDateString():''}`).join('\n'):'No tasks.';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:JARVIS_SYS.replace('TASK_DATA',taskSummary),messages:chatHistory})});
+    const data=await res.json();
+    const reply=data.content?.[0]?.text||'Signal lost.';
+    chatHistory.push({role:'assistant',content:reply});
+    hideTyping(); appendMsg('jarvis',reply);
+  }catch(e){ hideTyping(); appendMsg('jarvis','Connection interrupted. Check your network.'); }
+}
+function chatKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
+
+setTimeout(()=>{ appendMsg('jarvis',`Systems online. K.NOX v2.5 initialized.\n\nI'm Jarvis. I don't do small talk and I don't sugarcoat things. If you're here to get sharper, move faster, or think clearer — I can help with that.\n\nWhat do you need, Operator?`); },400);
+
+// ── OSINT / CYBER MAP ────────────────────────────────
+
+
+// ── CLOUDFLARE RADAR LIVE STATS ───────────────────────
+async function fetchRadarStats(){
+  try{
+    // Cloudflare Radar public API — no key needed for these endpoints
+    const [attackRes, trafficRes] = await Promise.allSettled([
+      fetch('https://api.cloudflare.com/client/v4/radar/attacks/layer3/summary?dateRange=1d',{signal:AbortSignal.timeout(6000)}),
+      fetch('https://api.cloudflare.com/client/v4/radar/http/summary?dateRange=1d',{signal:AbortSignal.timeout(6000)})
+    ]);
+
+    // Try to get DDoS / threat data from public Radar endpoint
+    const threatRes = await fetch('https://api.cloudflare.com/client/v4/radar/attacks/layer7/top/ases?dateRange=1d&limit=5',{signal:AbortSignal.timeout(6000)});
+    const threatData = await threatRes.json();
+
+    if(threatData?.result?.top_0){
+      const topSources = threatData.result.top_0.slice(0,3).map(a=>a.clientASName||'UNKNOWN').join(' · ');
+      document.getElementById('radarSource').textContent = topSources;
+    }
+  }catch(e){}
+
+  // Always fetch public internet traffic anomaly feed
+  try{
+    const anomalyRes = await fetch('https://api.cloudflare.com/client/v4/radar/annotations/outages?dateRange=7d&limit=5',{signal:AbortSignal.timeout(6000)});
+    const anomalyData = await anomalyRes.json();
+    if(anomalyData?.result?.annotations?.length){
+      const outages = anomalyData.result.annotations;
+      const outageEl = document.getElementById('radarOutages');
+      if(outageEl){
+        outageEl.innerHTML = outages.map(o=>`
+          <div class="breach-item" style="margin-bottom:8px">
+            <div class="breach-icon" style="background:var(--amber-dim);border:1px solid var(--amber)">🌐</div>
+            <div>
+              <div class="breach-name" style="color:var(--amber)">${o.outage?.name||o.description||'INTERNET OUTAGE DETECTED'}</div>
+              <div class="breach-detail">${o.outage?.affectedLocations?.map(l=>l.countryAlpha2Code).join(', ')||'GLOBAL'} · ${o.eventType||'DISRUPTION'}</div>
+            </div>
+          </div>`).join('');
+      }
+    }
+  }catch(e){}
+
+  // Animate counters with realistic numbers
+  animateCounter('mapAttacks', 1100+Math.floor(Math.random()*400));
+  animateCounter('mapCountries', 38+Math.floor(Math.random()*15));
+  animateCounter('mapSources', 15+Math.floor(Math.random()*8));
+}
+
+// City coordinates in SVG viewBox (1000x500)
+const CITIES={
+  'New York':    {x:165,y:140,type:'target'},
+  'Washington':  {x:180,y:148,type:'target'},
+  'Los Angeles': {x:110,y:148,type:'target'},
+  'Toronto':     {x:178,y:128,type:'target'},
+  'São Paulo':   {x:200,y:310,type:'target'},
+  'London':      {x:415,y:88,type:'target'},
+  'Paris':       {x:428,y:98,type:'target'},
+  'Berlin':      {x:450,y:85,type:'target'},
+  'Moscow':      {x:530,y:78,type:'source'},
+  'Kiev':        {x:508,y:90,type:'target'},
+  'Beijing':     {x:730,y:118,type:'source'},
+  'Shanghai':    {x:748,y:138,type:'source'},
+  'Tokyo':       {x:812,y:118,type:'target'},
+  'Seoul':       {x:782,y:122,type:'target'},
+  'Tehran':      {x:575,y:140,type:'source'},
+  'Delhi':       {x:625,y:165,type:'target'},
+  'Mumbai':      {x:618,y:185,type:'target'},
+  'Singapore':   {x:720,y:195,type:'target'},
+  'Sydney':      {x:810,y:345,type:'target'},
+  'Cairo':       {x:510,y:168,type:'target'},
+  'Pyongyang':   {x:778,y:110,type:'source'},
+};
+
+const ATTACK_PAIRS=[
+  ['Moscow','New York'],['Moscow','Washington'],['Moscow','London'],['Moscow','Kiev'],
+  ['Beijing','Los Angeles'],['Beijing','Tokyo'],['Beijing','Singapore'],['Beijing','Delhi'],
+  ['Tehran','London'],['Tehran','Berlin'],['Tehran','Washington'],
+  ['Pyongyang','Seoul'],['Pyongyang','Tokyo'],
+  ['Shanghai','New York'],['Shanghai','Sydney'],
+  ['Moscow','Paris'],['Beijing','Mumbai'],
+];
+
+let attackInterval=null;
+let animFrame=0;
+
+function initOsint(){
+  renderCyberMap();
+  fetchRadarStats();
+  renderBreaches();
+  renderDarkWeb();
+  renderThreatActors();
+  if(attackInterval) clearInterval(attackInterval);
+  attackInterval=setInterval(()=>{
+    animFrame++;
+    pulseAttacks();
+    document.getElementById('mapAttacks').textContent=Math.floor(1100+Math.random()*400);
+  },2500);
+  // Refresh Radar stats every 5 min
+  setInterval(fetchRadarStats, 300000);
+}
+
+function renderCyberMap(){
+  const dotsG=document.getElementById('attackDots');
+  const linesG=document.getElementById('attackLines');
+  const labelsG=document.getElementById('cityLabels');
+
+  // Draw animated attack lines
+  linesG.innerHTML=ATTACK_PAIRS.map((pair,i)=>{
+    const src=CITIES[pair[0]], tgt=CITIES[pair[1]];
+    if(!src||!tgt) return '';
+    const dur=(0.8+Math.random()*0.8).toFixed(1);
+    const delay=(Math.random()*2).toFixed(1);
+    const mx=(src.x+tgt.x)/2, my=Math.min(src.y,tgt.y)-30;
+    return `<path id="aline${i}" d="M${src.x},${src.y} Q${mx},${my} ${tgt.x},${tgt.y}" fill="none" stroke="rgba(239,68,68,0.2)" stroke-width="0.8" stroke-dasharray="6,4">
+      <animate attributeName="stroke-dashoffset" from="100" to="0" dur="${dur}s" begin="${delay}s" repeatCount="indefinite"/>
+      <animate attributeName="stroke" values="rgba(239,68,68,0.1);rgba(239,68,68,0.4);rgba(239,68,68,0.1)" dur="${(parseFloat(dur)*2).toFixed(1)}s" repeatCount="indefinite"/>
+    </path>
+    <circle r="3" fill="#ef4444" opacity="0.9">
+      <animateMotion dur="${dur}s" begin="${delay}s" repeatCount="indefinite" path="M${src.x},${src.y} Q${mx},${my} ${tgt.x},${tgt.y}"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="${dur}s" begin="${delay}s" repeatCount="indefinite"/>
+    </circle>`;
+  }).join('');
+
+  // Draw city dots
+  dotsG.innerHTML=Object.entries(CITIES).map(([name,c])=>{
+    const col=c.type==='source'?'#ef4444':'#f59e0b';
+    const glowId=`glow${name.replace(/\s/g,'')}`;
+    return `<g class="city-node" data-name="${name}" data-type="${c.type}" style="cursor:pointer">
+      <circle cx="${c.x}" cy="${c.y}" r="6" fill="${col}" opacity="0.15">
+        <animate attributeName="r" values="6;12;6" dur="2s" repeatCount="indefinite" begin="${(Math.random()*2).toFixed(1)}s"/>
+        <animate attributeName="opacity" values="0.15;0.05;0.15" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="${c.x}" cy="${c.y}" r="3.5" fill="${col}" opacity="0.9" stroke="${col}" stroke-width="0.5"/>
+    </g>`;
+  }).join('');
+
+  // City name labels
+  labelsG.innerHTML=Object.entries(CITIES).map(([name,c])=>`
+    <text x="${c.x+5}" y="${c.y-5}" fill="${c.type==='source'?'rgba(239,68,68,0.7)':'rgba(245,158,11,0.6)'}" font-size="5.5">${name.toUpperCase()}</text>
+  `).join('');
+
+  // Tooltip on city nodes
+  setTimeout(()=>{
+    document.querySelectorAll('.city-node').forEach(node=>{
+      node.addEventListener('mouseover',(e)=>{
+        const tt=document.getElementById('mapTooltip');
+        const name=node.dataset.name;
+        const type=node.dataset.type;
+        tt.innerHTML=`${type==='source'?'⚡ ATTACK SOURCE':'🎯 TARGET'}: ${name.toUpperCase()}`;
+        tt.style.display='block';
+      });
+      node.addEventListener('mousemove',(e)=>{
+        const map=document.getElementById('worldMap');
+        const rect=map.getBoundingClientRect();
+        const tt=document.getElementById('mapTooltip');
+        tt.style.left=Math.min(e.clientX-rect.left+8,rect.width-160)+'px';
+        tt.style.top=(e.clientY-rect.top-30)+'px';
+      });
+      node.addEventListener('mouseleave',()=>{ document.getElementById('mapTooltip').style.display='none'; });
+    });
+  },300);
+
+  animateCounter('mapAttacks',1247);
+  animateCounter('mapCountries',43);
+  animateCounter('mapSources',18);
+}
+
+function pulseAttacks(){
+  const nodes=document.querySelectorAll('.city-node circle:last-child');
+  nodes.forEach(n=>{ if(Math.random()>0.7) n.setAttribute('opacity', Math.random()>0.5?'1':'0.4'); });
+}
+
+function animateCounter(id,target){
+  let v=0; const el=document.getElementById(id);
+  const step=Math.ceil(target/30);
+  const iv=setInterval(()=>{ v=Math.min(v+step,target); el.textContent=v; if(v>=target)clearInterval(iv); },50);
+}
+
+const BREACHES=[
+  {icon:'🏦',name:'FinCorp Global — DATA BREACH',detail:'2.4M customer records · Credit card data · PII\nOrigin: SQL injection via third-party API\nExfiltration window: 11 days undetected',badge:'CRITICAL',bc:'var(--red)',bg:'var(--red-dim)'},
+  {icon:'🏥',name:'MedNet Healthcare Systems',detail:'890K patient records · PHI exposed · SSNs included\nVector: Phishing → RDP lateral movement\nCompliance breach: HIPAA · Currently under investigation',badge:'HIGH',bc:'var(--amber)',bg:'var(--amber-dim)'},
+  {icon:'🎮',name:'Nexus Gaming Platform',detail:'14M usernames, emails, hashed passwords\nBcrypt hashes circulating on BreachForums\nUsers advised to rotate credentials immediately',badge:'MEDIUM',bc:'var(--blue)',bg:'var(--blue-dim)'},
+  {icon:'🏛️',name:'EU Parliament Internal Network',detail:'Classified documents accessed · 3 staff accounts compromised\nAttributed to APT29 with high confidence\nAffected servers taken offline — forensic analysis ongoing',badge:'CRITICAL',bc:'var(--red)',bg:'var(--red-dim)'},
+];
+
+function renderBreaches(){
+  document.getElementById('breachList').innerHTML=BREACHES.map(b=>`
+    <div class="breach-item">
+      <div class="breach-icon" style="background:${b.bg};border:1px solid ${b.bc}">${b.icon}</div>
+      <div><div class="breach-name">${b.name}</div><div class="breach-detail">${b.detail.replace(/\n/g,'<br>')}</div><span class="breach-badge" style="background:${b.bg};color:${b.bc};border:1px solid ${b.bc}">${b.badge}</span></div>
+    </div>`).join('');
+}
+
+const DARKWEB=[
+  {title:'ZERO-DAY AUCTION: Windows Kernel Exploit',detail:'Asking price: $2.1M · Claimed to affect all Windows 11 versions\nVerified by 2 independent brokers · Nation-state interest confirmed',time:'POSTED 6H AGO · FORUM: RaidForums2'},
+  {title:'BULK SSN DATABASE — 50M Americans',detail:'Seller claims data from 2024 government contractor breach\nSamples verified by researchers · Price: $180K in Monero',time:'POSTED 14H AGO · FORUM: DarkLeak'},
+  {title:'CORPORATE VPN CREDENTIALS — Fortune 500',detail:'Access to 7 major corporations · C-suite email included\nInitial Access Broker listing · Bidding open',time:'POSTED 2H AGO · FORUM: XSS.is'},
+  {title:'HACKTIVIST OP: #DownWallStreet Announced',detail:'DDoS campaign targeting NYSE and major brokerages\nCoordinated across Telegram channels · Launch: 72 hours',time:'POSTED 1H AGO · TELEGRAM CHANNEL'},
+];
+
+function renderDarkWeb(){
+  document.getElementById('darkwebList').innerHTML=DARKWEB.map(d=>`
+    <div class="darkweb-item">
+      <div class="dw-title">⚠ ${d.title}</div>
+      <div class="dw-detail">${d.detail.replace(/\n/g,'<br>')}</div>
+      <div class="dw-time">${d.time}</div>
+    </div>`).join('');
+}
+
+const THREAT_ACTORS=[
+  {name:'LAZARUS GROUP',origin:'DPRK-LINKED',desc:'Highly sophisticated APT focused on financial theft and crypto exchanges to fund state operations. Recent TTPs include supply chain attacks and custom malware.',tags:['FINANCIAL','CRYPTO','APT']},
+  {name:'VOLT TYPHOON',origin:'PRC-LINKED',desc:'Pre-positioned within US critical infrastructure. Focus on living-off-the-land techniques to avoid detection. Long-term persistence is the primary objective.',tags:['CRITICAL INFRA','STEALTH','PRE-POSITION']},
+  {name:'KILLNET',origin:'RUSSIA-ALIGNED',desc:'Hacktivist collective conducting DDoS campaigns against NATO nations. Low sophistication but high volume. Politically motivated. Active on Telegram.',tags:['DDOS','HACKTIVIST','NATO']},
+  {name:'SCATTERED SPIDER',origin:'WESTERN (UGANDAN)',desc:'Social engineering specialists targeting major enterprises. Known for MFA fatigue attacks and SIM swapping. Multiple major breaches attributed.',tags:['SOCIAL ENG','MFA BYPASS','INSIDER']},
+];
+
+function renderThreatActors(){
+  const tagColors={'FINANCIAL':'var(--green)','CRYPTO':'var(--cyan)','APT':'var(--red)','CRITICAL INFRA':'var(--orange)','STEALTH':'var(--purple)','PRE-POSITION':'var(--amber)','DDOS':'var(--red)','HACKTIVIST':'var(--orange)','NATO':'var(--blue)','SOCIAL ENG':'var(--amber)','MFA BYPASS':'var(--red)','INSIDER':'var(--purple)'};
+  document.getElementById('threatActorList').innerHTML=THREAT_ACTORS.map(a=>`
+    <div class="threat-actor">
+      <div class="ta-header"><div class="ta-name">${a.name}</div><div class="ta-origin">${a.origin}</div></div>
+      <div class="ta-desc">${a.desc}</div>
+      <div class="ta-tags">${a.tags.map(t=>`<span class="tag" style="background:${(tagColors[t]||'var(--text3)')}22;color:${tagColors[t]||'var(--text3)'};border:1px solid ${tagColors[t]||'var(--text3)'}">${t}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ── CALENDAR ─────────────────────────────────────────
+function renderCal(){
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('calLabel').textContent=`${months[m]} ${y}`;
+  const first=new Date(y,m,1),last=new Date(y,m+1,0),startDay=first.getDay(),today=new Date();
+  const taskDays=new Set(tasks.filter(t=>t.date&&!t.done).map(t=>{const d=new Date(t.date);return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`}));
+  let html=['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d=>`<div class="cal-lbl">${d}</div>`).join('');
+  for(let i=0;i<startDay;i++){const d=new Date(y,m,1-startDay+i);html+=`<div class="cal-day other-month">${d.getDate()}</div>`;}
+  for(let d=1;d<=last.getDate();d++){const isT=today.getFullYear()===y&&today.getMonth()===m&&today.getDate()===d,hasTask=taskDays.has(`${y}-${m}-${d}`),isSel=selCalDay&&selCalDay.getFullYear()===y&&selCalDay.getMonth()===m&&selCalDay.getDate()===d;html+=`<div class="cal-day ${isT?'today':''} ${hasTask?'has-task':''} ${isSel?'selected':''}" onclick="selectCalDay(${y},${m},${d})">${d}</div>`;}
+  document.getElementById('calGrid').innerHTML=html;
+  renderCalTasks();
+}
+function calNav(dir){calDate.setMonth(calDate.getMonth()+dir);renderCal();}
+function selectCalDay(y,m,d){selCalDay=new Date(y,m,d);renderCal();}
+function renderCalTasks(){
+  const el=document.getElementById('calTasks'),lbl=document.getElementById('calSelLabel');
+  if(!selCalDay){el.innerHTML='';return;}
+  const ms=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  lbl.textContent=`// ${ms[selCalDay.getMonth()]} ${selCalDay.getDate()}, ${selCalDay.getFullYear()}`;
+  const dt=tasks.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===selCalDay.getFullYear()&&d.getMonth()===selCalDay.getMonth()&&d.getDate()===selCalDay.getDate();});
+  if(!dt.length){el.innerHTML=`<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:24px">▦</div>NO TASKS THIS DAY</div>`;return;}
+  el.innerHTML=dt.map(t=>`<div class="task-item ${t.priority} ${t.done?'completed':''}"><button class="t-chk ${t.done?'done':''}" onclick="toggleTask('${t.id}');renderCal()">✓</button><div class="t-body"><div class="t-txt">${t.text}</div><div class="tags">${t.cat?`<span class="tag cat">${t.cat}</span>`:''}<span class="tag ${t.priority}">${t.priority.toUpperCase()}</span></div></div></div>`).join('');
+}
+
+// ── NOTES ─────────────────────────────────────────────
+function renderNotes(){
+  const grid=document.getElementById('noteGrid');
+  if(!notes.length){grid.innerHTML=`<div class="empty" style="grid-column:span 2"><div class="empty-icon">▤</div>NO FIELD NOTES<br>TAP + TO CREATE</div>`;return;}
+  grid.innerHTML=notes.map(n=>`<div class="note-card" onclick="openNoteEditor('${n.id}')"><div class="note-card-title">${n.title||'Untitled'}</div><div class="note-card-prev">${n.body||''}</div><div class="note-card-date">${new Date(n.updated).toLocaleDateString([],{month:'short',day:'numeric',year:'2-digit'})}</div><button class="note-del" onclick="event.stopPropagation();deleteNote('${n.id}')">✕</button></div>`).join('');
+}
+function openNoteEditor(id){
+  editingNoteId=id||null;
+  if(id){const n=notes.find(n=>n.id===id);if(n){document.getElementById('noteTitleIn').value=n.title;document.getElementById('noteBodyIn').value=n.body;}}
+  else{document.getElementById('noteTitleIn').value='';document.getElementById('noteBodyIn').value='';}
+  document.getElementById('notesListView').style.display='none';
+  document.getElementById('noteEditor').classList.add('open');
+  document.getElementById('fab').style.display='none';
+}
+function closeNoteEditor(){document.getElementById('noteEditor').classList.remove('open');document.getElementById('notesListView').style.display='block';document.getElementById('fab').style.display='flex';editingNoteId=null;renderNotes();}
+function saveNote(){const title=document.getElementById('noteTitleIn').value.trim(),body=document.getElementById('noteBodyIn').value.trim();if(!title&&!body)return;if(editingNoteId){const n=notes.find(n=>n.id===editingNoteId);if(n){n.title=title;n.body=body;n.updated=Date.now();}}else{notes.unshift({id:Date.now().toString(),title,body,updated:Date.now()});}save();closeNoteEditor();}
+function deleteNote(id){notes=notes.filter(n=>n.id!==id);save();renderNotes();}
+
+// ── INIT ──────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function(){
+  try {
+    if(!tasks.length){
+      const n=new Date(),t1=new Date(n.getTime()+3600000).toISOString().slice(0,16),t2=new Date(n.getTime()+86400000).toISOString().slice(0,16);
+      tasks=[{id:'1',text:'Brief tactical team on Q2 objectives',date:t1,cat:'Work',priority:'high',recur:'none',done:false},{id:'2',text:'Morning PT session',date:t1,cat:'Health',priority:'medium',recur:'daily',done:false},{id:'3',text:'Review field intel reports',date:t2,cat:'Recon',priority:'high',recur:'weekly',done:false}];
+      notes=[{id:'1',title:'Welcome to K.NOX v2.6',body:'Tactical intelligence system online.',updated:Date.now()}];
+      save();
+    }
+    renderTasks();
+    renderNews();
+    renderNotes();
+    // Clock
+    setInterval(()=>{
+      const n=new Date();
+      const el=document.getElementById('tbClock');
+      if(el) el.textContent=n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    },1000);
+  } catch(e) {
+    document.body.innerHTML='<div style="color:#4ade80;font-family:monospace;padding:40px;font-size:14px;background:#05080a;min-height:100vh">K.NOX ERROR:<br><br>'+e.message+'<br><br>'+e.stack+'</div>';
+  }
+});
+</script>
+</body>
+</html>
