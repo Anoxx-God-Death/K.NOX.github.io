@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="K.NOX">
+<meta name="theme-color" content="#000000">
+<title>K.NOX</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05080a; --bg2:#090e11; --bg3:#0d1419;
+  --surface:#101820; --surface2:#141f2a;
+  --border:#1a2a38; --border2:#253545;
+  --green:#4ade80; --green-dim:#071a10;
+  --amber:#f59e0b; --amber-dim:#2a1d00;
+  --red:#ef4444; --red-dim:#2a0a0a;
+  --blue:#38bdf8; --blue-dim:#072030;
+  --purple:#a78bfa; --purple-dim:#1a1030;
+  --cyan:#22d3ee; --cyan-dim:#061e28;
+  --orange:#fb923c; --orange-dim:#2a1000;
+  --text:#c0d0da; --text2:#6a8a9a; --text3:#304050;
+  --glow:0 0 14px rgba(74,222,128,0.35);
+  --glow-sm:0 0 7px rgba(74,222,128,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);
+  pointer-events:none;z-index:9999;
+}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:200;padding-top:env(safe-area-inset-top)}
+.menu-btn{width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;flex-shrink:0}
+.menu-btn span{display:block;width:18px;height:2px;background:var(--green);border-radius:1px;transition:all .3s}
+.menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.menu-btn.open span:nth-child(2){opacity:0}
+.menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.tb-logo{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:4px;color:var(--green);text-shadow:var(--glow)}
+.tb-right{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)}
+.status-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;box-shadow:var(--glow-sm)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* DRAWER */
+.drawer-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(5px)}
+.drawer-ov.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;left:-290px;bottom:0;width:290px;background:var(--bg2);border-right:1px solid var(--border);z-index:400;transition:left .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+.drawer.open{left:0}
+.dr-head{padding:26px 24px 18px;border-bottom:1px solid var(--border)}
+.dr-logo{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);text-shadow:var(--glow);letter-spacing:5px;margin-bottom:3px}
+.dr-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px}
+.dr-user{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.u-av{width:40px;height:40px;background:var(--green-dim);border:1.5px solid var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:13px;color:var(--green);font-weight:700}
+.u-name{font-weight:600;font-size:14px;color:var(--text)}
+.u-role{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:1px}
+.dr-nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-sect{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:3px;padding:10px 24px 5px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 24px;cursor:pointer;border-left:3px solid transparent;transition:all .2s}
+.nav-item:active,.nav-item:hover{background:var(--surface)}
+.nav-item.active{background:var(--surface);border-left-color:var(--green)}
+.nav-item.active .nav-lbl{color:var(--green)}
+.nav-ic{width:32px;height:32px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.nav-item.active .nav-ic{background:var(--green-dim);border-color:var(--green)}
+.nav-lbl{font-weight:600;font-size:15px;color:var(--text2);letter-spacing:1px;flex:1}
+.nav-badge{background:var(--green);color:#000;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.dr-foot{padding:14px 24px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px}
+
+/* MAIN */
+.main{position:fixed;top:56px;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom)}
+.screen{display:none;padding:16px}
+.screen.active{display:block}
+
+/* SEC HEADER */
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sec-ic{width:36px;height:36px;background:var(--green-dim);border:1px solid var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.sec-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:3px;color:var(--green)}
+.sec-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center}
+.stat-num{font-family:'Orbitron',monospace;font-size:22px;color:var(--green);text-shadow:var(--glow-sm);line-height:1;margin-bottom:3px}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px}
+
+/* FILTER */
+.filter-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px;padding-bottom:2px}
+.filter-row::-webkit-scrollbar{display:none}
+.fbtn{flex-shrink:0;padding:6px 13px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.fbtn.active{background:var(--green-dim);color:var(--green);border-color:var(--green)}
+
+/* TASKS */
+< truncated lines 100-994 >
+];
+
+function renderBreaches(){
+  document.getElementById('breachList').innerHTML=BREACHES.map(b=>`
+    <div class="breach-item">
+      <div class="breach-icon" style="background:${b.bg};border:1px solid ${b.bc}">${b.icon}</div>
+      <div><div class="breach-name">${b.name}</div><div class="breach-detail">${b.detail.replace(/\n/g,'<br>')}</div><span class="breach-badge" style="background:${b.bg};color:${b.bc};border:1px solid ${b.bc}">${b.badge}</span></div>
+    </div>`).join('');
+}
+
+const DARKWEB=[
+  {title:'ZERO-DAY AUCTION: Windows Kernel Exploit',detail:'Asking price: $2.1M · Claimed to affect all Windows 11 versions\nVerified by 2 independent brokers · Nation-state interest confirmed',time:'POSTED 6H AGO · FORUM: RaidForums2'},
+  {title:'BULK SSN DATABASE — 50M Americans',detail:'Seller claims data from 2024 government contractor breach\nSamples verified by researchers · Price: $180K in Monero',time:'POSTED 14H AGO · FORUM: DarkLeak'},
+  {title:'CORPORATE VPN CREDENTIALS — Fortune 500',detail:'Access to 7 major corporations · C-suite email included\nInitial Access Broker listing · Bidding open',time:'POSTED 2H AGO · FORUM: XSS.is'},
+  {title:'HACKTIVIST OP: #DownWallStreet Announced',detail:'DDoS campaign targeting NYSE and major brokerages\nCoordinated across Telegram channels · Launch: 72 hours',time:'POSTED 1H AGO · TELEGRAM CHANNEL'},
+];
+
+function renderDarkWeb(){
+  document.getElementById('darkwebList').innerHTML=DARKWEB.map(d=>`
+    <div class="darkweb-item">
+      <div class="dw-title">⚠ ${d.title}</div>
+      <div class="dw-detail">${d.detail.replace(/\n/g,'<br>')}</div>
+      <div class="dw-time">${d.time}</div>
+    </div>`).join('');
+}
+
+const THREAT_ACTORS=[
+  {name:'LAZARUS GROUP',origin:'DPRK-LINKED',desc:'Highly sophisticated APT focused on financial theft and crypto exchanges to fund state operations. Recent TTPs include supply chain attacks and custom malware.',tags:['FINANCIAL','CRYPTO','APT']},
+  {name:'VOLT TYPHOON',origin:'PRC-LINKED',desc:'Pre-positioned within US critical infrastructure. Focus on living-off-the-land techniques to avoid detection. Long-term persistence is the primary objective.',tags:['CRITICAL INFRA','STEALTH','PRE-POSITION']},
+  {name:'KILLNET',origin:'RUSSIA-ALIGNED',desc:'Hacktivist collective conducting DDoS campaigns against NATO nations. Low sophistication but high volume. Politically motivated. Active on Telegram.',tags:['DDOS','HACKTIVIST','NATO']},
+  {name:'SCATTERED SPIDER',origin:'WESTERN (UGANDAN)',desc:'Social engineering specialists targeting major enterprises. Known for MFA fatigue attacks and SIM swapping. Multiple major breaches attributed.',tags:['SOCIAL ENG','MFA BYPASS','INSIDER']},
+];
+
+function renderThreatActors(){
+  const tagColors={'FINANCIAL':'var(--green)','CRYPTO':'var(--cyan)','APT':'var(--red)','CRITICAL INFRA':'var(--orange)','STEALTH':'var(--purple)','PRE-POSITION':'var(--amber)','DDOS':'var(--red)','HACKTIVIST':'var(--orange)','NATO':'var(--blue)','SOCIAL ENG':'var(--amber)','MFA BYPASS':'var(--red)','INSIDER':'var(--purple)'};
+  document.getElementById('threatActorList').innerHTML=THREAT_ACTORS.map(a=>`
+    <div class="threat-actor">
+      <div class="ta-header"><div class="ta-name">${a.name}</div><div class="ta-origin">${a.origin}</div></div>
+      <div class="ta-desc">${a.desc}</div>
+      <div class="ta-tags">${a.tags.map(t=>`<span class="tag" style="background:${(tagColors[t]||'var(--text3)')}22;color:${tagColors[t]||'var(--text3)'};border:1px solid ${tagColors[t]||'var(--text3)'}">${t}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ── CALENDAR ─────────────────────────────────────────
+function renderCal(){
+  const y=calDate.getFullYear(),m=calDate.getMonth();
+  const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('calLabel').textContent=`${months[m]} ${y}`;
+  const first=new Date(y,m,1),last=new Date(y,m+1,0),startDay=first.getDay(),today=new Date();
+  const taskDays=new Set(tasks.filter(t=>t.date&&!t.done).map(t=>{const d=new Date(t.date);return`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`}));
+  let html=['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d=>`<div class="cal-lbl">${d}</div>`).join('');
+  for(let i=0;i<startDay;i++){const d=new Date(y,m,1-startDay+i);html+=`<div class="cal-day other-month">${d.getDate()}</div>`;}
+  for(let d=1;d<=last.getDate();d++){const isT=today.getFullYear()===y&&today.getMonth()===m&&today.getDate()===d,hasTask=taskDays.has(`${y}-${m}-${d}`),isSel=selCalDay&&selCalDay.getFullYear()===y&&selCalDay.getMonth()===m&&selCalDay.getDate()===d;html+=`<div class="cal-day ${isT?'today':''} ${hasTask?'has-task':''} ${isSel?'selected':''}" onclick="selectCalDay(${y},${m},${d})">${d}</div>`;}
+  document.getElementById('calGrid').innerHTML=html;
+  renderCalTasks();
+}
+function calNav(dir){calDate.setMonth(calDate.getMonth()+dir);renderCal();}
+function selectCalDay(y,m,d){selCalDay=new Date(y,m,d);renderCal();}
+function renderCalTasks(){
+  const el=document.getElementById('calTasks'),lbl=document.getElementById('calSelLabel');
+  if(!selCalDay){el.innerHTML='';return;}
+  const ms=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  lbl.textContent=`// ${ms[selCalDay.getMonth()]} ${selCalDay.getDate()}, ${selCalDay.getFullYear()}`;
+  const dt=tasks.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===selCalDay.getFullYear()&&d.getMonth()===selCalDay.getMonth()&&d.getDate()===selCalDay.getDate();});
+  if(!dt.length){el.innerHTML=`<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:24px">▦</div>NO TASKS THIS DAY</div>`;return;}
+  el.innerHTML=dt.map(t=>`<div class="task-item ${t.priority} ${t.done?'completed':''}"><button class="t-chk ${t.done?'done':''}" onclick="toggleTask('${t.id}');renderCal()">✓</button><div class="t-body"><div class="t-txt">${t.text}</div><div class="tags">${t.cat?`<span class="tag cat">${t.cat}</span>`:''}<span class="tag ${t.priority}">${t.priority.toUpperCase()}</span></div></div></div>`).join('');
+}
+
+// ── NOTES ─────────────────────────────────────────────
+function renderNotes(){
+  const grid=document.getElementById('noteGrid');
+  if(!notes.length){grid.innerHTML=`<div class="empty" style="grid-column:span 2"><div class="empty-icon">▤</div>NO FIELD NOTES<br>TAP + TO CREATE</div>`;return;}
+  grid.innerHTML=notes.map(n=>`<div class="note-card" onclick="openNoteEditor('${n.id}')"><div class="note-card-title">${n.title||'Untitled'}</div><div class="note-card-prev">${n.body||''}</div><div class="note-card-date">${new Date(n.updated).toLocaleDateString([],{month:'short',day:'numeric',year:'2-digit'})}</div><button class="note-del" onclick="event.stopPropagation();deleteNote('${n.id}')">✕</button></div>`).join('');
+}
+function openNoteEditor(id){
+  editingNoteId=id||null;
+  if(id){const n=notes.find(n=>n.id===id);if(n){document.getElementById('noteTitleIn').value=n.title;document.getElementById('noteBodyIn').value=n.body;}}
+  else{document.getElementById('noteTitleIn').value='';document.getElementById('noteBodyIn').value='';}
+  document.getElementById('notesListView').style.display='none';
+  document.getElementById('noteEditor').classList.add('open');
+  document.getElementById('fab').style.display='none';
+}
+function closeNoteEditor(){document.getElementById('noteEditor').classList.remove('open');document.getElementById('notesListView').style.display='block';document.getElementById('fab').style.display='flex';editingNoteId=null;renderNotes();}
+function saveNote(){const title=document.getElementById('noteTitleIn').value.trim(),body=document.getElementById('noteBodyIn').value.trim();if(!title&&!body)return;if(editingNoteId){const n=notes.find(n=>n.id===editingNoteId);if(n){n.title=title;n.body=body;n.updated=Date.now();}}else{notes.unshift({id:Date.now().toString(),title,body,updated:Date.now()});}save();closeNoteEditor();}
+function deleteNote(id){notes=notes.filter(n=>n.id!==id);save();renderNotes();}
+
+// ── INIT ──────────────────────────────────────────────
+if(!tasks.length){
+  const n=new Date(),t1=new Date(n.getTime()+3600000).toISOString().slice(0,16),t2=new Date(n.getTime()+86400000).toISOString().slice(0,16);
+  tasks=[{id:'1',text:'Brief tactical team on Q2 objectives',date:t1,cat:'Work',priority:'high',recur:'none',done:false},{id:'2',text:'Morning PT session',date:t1,cat:'Health',priority:'medium',recur:'daily',done:false},{id:'3',text:'Review field intel reports',date:t2,cat:'Recon',priority:'high',recur:'weekly',done:false}];
+  notes=[{id:'1',title:'Welcome to K.NOX v2.5',body:'Tactical intelligence system online. Use Jarvis for AI mentorship, Intel Feed for global situational awareness, OSINT for threat intelligence.',updated:Date.now()}];
+  save();
+}
+renderTasks();
+renderNews();
+renderNotes();
+</script>
+</body>
+</html>
